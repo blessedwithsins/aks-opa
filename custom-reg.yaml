@@ -24,3 +24,10 @@ spec:
           not re_match(input.parameters.imageRegex, container.image)
           msg := sprintf("Container image %v for container %v has not been allowed.", [container.image, container.name])
         }
+
+        input_containers[c] {
+            c := input.review.object.spec.containers[_]
+        }
+        input_containers[c] {
+            c := input.review.object.spec.initContainers[_]
+        }
