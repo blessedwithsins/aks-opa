@@ -19,23 +19,15 @@ spec:
         package k8sazurecustomcontainerallowedregistries
 
         violation[{"msg": msg}] {
-            obj := input.review.object
-            c := input_containers[_]
-            not correct_registry(c.image)
-            msg := sprintf("resource '%v/%v' container %v is not using correct registry", [obj.kind, obj.metadata.name, c.name])
-        }
-
-        correct_registry(image) {
-            startswith(image, "wardaddy.azurecr.io/")
+          container := input_containers[_]
+          not re_match(input.parameters.imageRegex, container.image)
+          msg := sprintf("Container image %v for container %v has not been allowed.", [container.image, container.name])
         }
         
-        correct_registry(image) {
-            startswith(image, "wardaddy.azurecr.io/")
-        }
-
         input_containers[c] {
-          c := input.review.object.spec.containers[_]
+            c := input.review.object.spec.containers[_]
         }
+        
         input_containers[c] {
             c := input.review.object.spec.initContainers[_]
         }
